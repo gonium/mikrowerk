@@ -1,16 +1,20 @@
-# ----------------------------------------------------------------------------
-# Makefile to compile and link the UART library and test program
-# Author: Peter Fleury
-# File:   $Id: makefile.uart,v 1.3 2005/04/09 07:56:09 Peter Exp $
-# based on WinAVR Makefile Template written by Eric B. Weddington, Jörg Wunsch, et al.
-#
-# Adjust F_CPU below to the clock frequency in Mhz of your AVR target
-#
-# Adjust the size of the receive and transmit ringbuffer in bytes using the
-# defines -DUART_RX_BUFFER_SIZE=128 and -DUART_TX_BUFFER_SIZE=128 in the 
-# CDEF section below
+# This file is part of Meet-o-Matic.
+# (c) 2007 Mathias Dalheimer (md@gonium.net)
+# Makefile template by Peter Fleury
 # 
-#----------------------------------------------------------------------------
+# Meet-o-Matic is free software: you can redistribute it and/or modify
+# it under the terms of the GNU General Public License as published by
+# the Free Software Foundation, either version 3 of the License, or
+# (at your option) any later version.
+#
+# Meet-o-Matic is distributed in the hope that it will be useful,
+# but WITHOUT ANY WARRANTY; without even the implied warranty of
+# MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+# GNU General Public License for more details.
+#
+# You should have received a copy of the GNU General Public License
+# along with Meet-o-Matic.  If not, see <http://www.gnu.org/licenses/>.
+#
 # On command line:
 #
 # make all = Make software.
@@ -57,7 +61,7 @@ TARGET = main
 
 
 # List C source files here. (C dependencies are automatically generated.)
-SRC = $(TARGET).c uart.c timer.c
+SRC = $(TARGET).c timer.c
 
 
 # List Assembler source files here.
