@@ -16,4 +16,4 @@ The device is based on an ATTiny2313. A single button is used to adjust the time
 
 This is a beta release of the Meet-O-Matic. The open issues are documented in the issuetracker:
 
-http://code.google.com/p/mikrowerk/issues/list?q=label:Meet-O-Matic
+http://code.google.com/p/mikrowerk/issues/list?q=label:MeetOMatic
