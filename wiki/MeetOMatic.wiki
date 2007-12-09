@@ -11,3 +11,9 @@ Of course, a simple time-monitoring device can provide input to a social feedbac
 The theory is simple: start the device and it will show you a progressbar. After the maximum time of a healthy meeting, 15 minutes, has elapsed, an alarm tone is played. Of course, you can adjust the countdown time.
 
 The device is based on an ATTiny2313. A single button is used to adjust the time. After the alarm ringed, the device is put into sleep mode. The button can generate an interrupt -- thus waking the device and restarting the countdown again.
+
+= Open issues =
+
+This is a beta release of the Meet-O-Matic. The open issues are documented in the issuetracker:
+
+http://code.google.com/p/mikrowerk/issues/list?q=label:Meet-O-Matic
