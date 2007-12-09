@@ -1,5 +1,7 @@
 #summary The microcontroller which prevents meetings to go forever
 
+http://mikrowerk.googlecode.com/svn/meet-o-matic/pics/prototype1.jpg
+
 == Motivation ==
 
 So, you have been in project meetings, wasting time... The problem is often not the intentions of your coworkers (and yourself!), but meetings just tend to extend themselves by principles physicist have no understanding yet.
