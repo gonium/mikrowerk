@@ -31,7 +31,9 @@
 #define F_CPU 7372800UL
 #endif
 
-#define LED_CHUNK_TIME 1000
+// Three minutes -> 6 seconds per LED.
+#define LED_CHUNK_TIME 6000
+
 // We have three LED banks to multiplex
 #define MULTIPLEX_LED_MAX 3 
 #define TIMER_MAX_VALUE 30 
