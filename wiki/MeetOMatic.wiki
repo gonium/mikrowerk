@@ -1,0 +1,15 @@
+#summary The microcontroller which prevents meetings to go forever
+
+= Motivation =
+
+So, you have been in project meetings, wasting time... The problem is often not the intentions of your coworkers (and yourself!), but meetings just tend to extend themselves by principles physicist have no understanding yet.
+
+Of course, a simple time-monitoring device can provide input to a social feedback-loop - with other words, it can remind yourself to keep meetings short and concise.
+
+= Principle of Operation =
+
+The 
+Add your content here.  Format your content with:
+  * Text in *bold* or _italic_
+  * Headings, paragraphs, and lists
+  * Automatic links to other wiki pages
