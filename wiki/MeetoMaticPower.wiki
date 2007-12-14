@@ -1,0 +1,7 @@
+#summary Optimizing the power consumption
+
+== Introduction ==
+
+In order to be able to run the device from batteries, I need to optimize the power consumption. I started with a very simple 7805-based power regulator, which eats up the 9V block battery fairly quickly. 
+
+== 7805-based hardware ==
