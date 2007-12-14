@@ -10,9 +10,11 @@ Of course, a simple time-monitoring device can provide input to a social feedbac
 
 == Principle of Operation ==
 
-The theory is simple: start the device and it will show you a progressbar. After the maximum time of a healthy meeting, 15 minutes, has elapsed, an alarm tone is played. Of course, you can adjust the countdown time.
+The theory is simple: start the device and it will show you a progress bar. After the maximum time of a healthy meeting, 15 minutes, has elapsed, an alarm tone is played. Of course, you can adjust the countdown time.
 
 The device is based on an ATTiny2313. A single button is used to adjust the time. After the alarm ringed, the device is put into sleep mode. The button can generate an interrupt -- thus waking the device and restarting the countdown again.
+
+A design goal of the device is to reduce the power consumption as far as possible with off-the-shelf, easily accessible hardware. Read more on the MeetOMaticPower page
 
 == Open issues ==
 
