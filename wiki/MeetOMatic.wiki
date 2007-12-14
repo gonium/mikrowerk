@@ -14,7 +14,7 @@ The theory is simple: start the device and it will show you a progress bar. Afte
 
 The device is based on an ATTiny2313. A single button is used to adjust the time. After the alarm ringed, the device is put into sleep mode. The button can generate an interrupt -- thus waking the device and restarting the countdown again.
 
-A design goal of the device is to reduce the power consumption as far as possible with off-the-shelf, easily accessible hardware. Read more on the MeetOMaticPower page
+A design goal of the device is to reduce the power consumption as far as possible with off-the-shelf, easily accessible hardware. Read more on the MeetoMaticPower page
 
 == Open issues ==
 
