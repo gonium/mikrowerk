@@ -1,7 +1,16 @@
 #summary Optimizing the power consumption
+#labels Phase-Design,power
 
 == Introduction ==
 
-In order to be able to run the device from batteries, I need to optimize the power consumption. I started with a very simple 7805-based power regulator, which eats up the 9V block battery fairly quickly. 
+In order to be able to run the device from batteries, I need to optimize the power consumption. I started with a very simple 7805-based power regulator, which eats up the 9V block battery fairly quickly. Beside optimizing the hardware, one should also consider software adjustments.
 
 == 7805-based hardware ==
+I start with measuring the 7805-based prototype:
+
+|| Peak Current || 120 mA ||
+|| All LEDs operating || 50 mA ||
+|| One LED operating ||  ||
+|| ATTiny2313 sleep mode || ||
+
+The peak current occurs during startup when all LEDs are switched on for testing. During operation, the three LED banks are multiplexed and therefore the power consumption drops to 50 mA. 
