@@ -8,9 +8,12 @@ In order to be able to run the device from batteries, I need to optimize the pow
 == 7805-based hardware ==
 I start with measuring the 7805-based prototype:
 
-|| Peak Current || 120 mA ||
+|| Peak Current || 92 mA ||
 || All LEDs operating || 50 mA ||
-|| One LED operating ||  ||
-|| ATTiny2313 sleep mode || ||
+|| One LED operating || 10 mA ||
+|| Alarm rings || 8 mA ||
+|| ATTiny2313 sleep mode || 3mA ||
 
-The peak current occurs during startup when all LEDs are switched on for testing. During operation, the three LED banks are multiplexed and therefore the power consumption drops to 50 mA. 
+The peak current occurs during startup when all LEDs are switched on for testing. During operation, the three LED banks are multiplexed and therefore the power consumption drops to 50 mA. Depending on the number of LEDs that are on, the operating current goes down to 10 mA. When the alarm rings, the system draws 8mA.
+
+When the ATTiny2313 enters sleep mode, the system draws 3 mA. The datasheet of the ATTiny2313 lists a maximum of 6 µA (watchdog enabled) or 2 µA (watchdog disabled) in the power-down mode. 
