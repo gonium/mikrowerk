@@ -16,12 +16,8 @@ I start with measuring the 7805-based prototype:
 || Alarm rings || 8 mA ||
 || ATTiny2313 sleep mode || 3mA ||
 
-The peak current occurs during startup when all LEDs are switched on for testing. During operation, the three LED banks are multiplexed and therefore the power consumption drops to 50 mA. Depending on the number of LEDs that are on, the operating current goes down to 10 mA. When the alarm rings, the system draws 8mA.
+The peak current occurs during startup when all LEDs are switched on for testing. During operation, the three LED banks are multiplexed and therefore the power consumption drops to 50 mA. Depending on the number of LEDs that are on, the operating current goes down to 10 mA. When the alarm rings, the system draws 8mA. 
 
-When the ATTiny2313 enters sleep mode, the system draws 3 mA. The datasheet of the ATTiny2313 lists a maximum of 6 µA (watchdog enabled) or 2 µA (watchdog disabled) in the power-down mode. The quiescent current of the 7805 is typically 5 mA - based on the datasheet.
+When the ATTiny2313 enters sleep mode, the system draws 3 mA. The datasheet of the ATTiny2313 lists a maximum of 6 µA (watchdog enabled) or 2 µA (watchdog disabled) in the power-down mode. The quiescent current of the 7805 is typically 5 mA - based on the datasheet. I assume that the minimal value is lower than the 3mA measured above. The major current sink is the regulator.
 
 The battery will last for 500mAh/5mA=50h, so only a couple of days. Of course, this is not acceptable...
-
-
-
-I assume that the minimal value is lower than the 3mA measured above. The major current sink is the regulator.
