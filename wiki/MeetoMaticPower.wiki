@@ -5,6 +5,8 @@
 
 In order to be able to run the device from batteries, I need to optimize the power consumption. I started with a very simple 7805-based power regulator, which eats up the 9V block battery fairly quickly. Beside optimizing the hardware, one should also consider software adjustments.
 
+The battery is a 9V block battery (6LR61). The alkaline type provide a capacity of 500-600mAh.
+
 == 7805-based hardware ==
 I start with measuring the 7805-based prototype:
 
@@ -16,4 +18,10 @@ I start with measuring the 7805-based prototype:
 
 The peak current occurs during startup when all LEDs are switched on for testing. During operation, the three LED banks are multiplexed and therefore the power consumption drops to 50 mA. Depending on the number of LEDs that are on, the operating current goes down to 10 mA. When the alarm rings, the system draws 8mA.
 
-When the ATTiny2313 enters sleep mode, the system draws 3 mA. The datasheet of the ATTiny2313 lists a maximum of 6 µA (watchdog enabled) or 2 µA (watchdog disabled) in the power-down mode. 
+When the ATTiny2313 enters sleep mode, the system draws 3 mA. The datasheet of the ATTiny2313 lists a maximum of 6 µA (watchdog enabled) or 2 µA (watchdog disabled) in the power-down mode. The quiescent current of the 7805 is typically 5 mA - based on the datasheet.
+
+The battery will last for 500mAh/5mA=50h, so only a couple of days. Of course, this is not acceptable...
+
+
+
+I assume that the minimal value is lower than the 3mA measured above. The major current sink is the regulator.
