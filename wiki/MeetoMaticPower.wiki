@@ -21,3 +21,6 @@ The peak current occurs during startup when all LEDs are switched on for testing
 When the ATTiny2313 enters sleep mode, the system draws 3 mA. The datasheet of the ATTiny2313 lists a maximum of 6 µA (watchdog enabled) or 2 µA (watchdog disabled) in the power-down mode. The quiescent current of the 7805 is typically 5 mA - based on the datasheet. I assume that the minimal value is lower than the 3mA measured above. The major current sink is the regulator.
 
 The battery will last for 500mAh/5mA=50h, so only a couple of days. Of course, this is not acceptable...
+
+== LP2950 power regulator ==
+These power regulators are designed to have a very low quiescent current of 75 µA. Lets say the ATTiny and the peripherals draw 80 µA, then the battery will live for 500mAh/0.08mA=6250 hours, about 260 days. Better.
