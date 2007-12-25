@@ -32,7 +32,9 @@
 #endif
 
 // Three minutes -> 6 seconds per LED.
-#define LED_CHUNK_TIME 6000
+//#define LED_CHUNK_TIME 6000
+#define LED_CHUNK_TIME 500
+#define STARTUP_DELAY 3000
 
 // We have three LED banks to multiplex
 #define MULTIPLEX_LED_MAX 3 
@@ -192,7 +194,7 @@ void initialize(void) {
   sei();
   
   beep();
-  delay(1000);
+  delay(STARTUP_DELAY);
   checkPushbutton();
   /**
    * Initialize the global variables
