@@ -32,9 +32,14 @@
 #endif
 
 // Three minutes -> 6 seconds per LED.
-//#define LED_CHUNK_TIME 6000
-#define LED_CHUNK_TIME 500
-#define STARTUP_DELAY 3000
+#define LED_CHUNK_TIME 6000
+//#define LED_CHUNK_TIME 500
+
+/**
+ * During startup, all LEDs are switched on to test the functionality.
+ * Change this value to the amount of millis the LEDs should be on.
+ */
+#define STARTUP_DELAY 500
 
 // We have three LED banks to multiplex
 #define MULTIPLEX_LED_MAX 3 
