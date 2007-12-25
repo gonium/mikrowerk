@@ -30,6 +30,8 @@ The ATTiny microcontroller series is designed for low power consumption - and it
 
 In order to test the quietescent current, I used a MC34063-based SMPS power supply to vary the input voltage from 4.14V to 2.8V. The circuit works, but the brightness of the LEDs decays (which I expected). In sleep mode, the circuit consumes 184 µA@2.8V and 214 µA@4.14 V.
 
+http://mikrowerk.googlecode.com/svn/meet-o-matic/pics/AA-powertest.jpg
+
 The AA cells have a capacity of 2850mAh, so three of them have a combined capacity of 3*2850mAh=8550mAh. The batteries will last (theoretically) for 8550mAh/0.200mA=42750h, approximately four years in sleep mode. Although I expect the batteries to decay over time, this seems to be a reasonable solution for the power supply.
 
 Note that the power consumption could be reduced further by using a slower crystal, but I am quite satisfied with this configuration.
