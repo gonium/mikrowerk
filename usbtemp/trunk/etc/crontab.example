@@ -1,0 +1,7 @@
+# Linux cron can handle environment variables
+# set usbtemp path
+USBTEMP_HOME=/home/md/Projects/usbtemp/trunk
+
+# m h  dom mon dow   command
+*/5 * * * *     $USBTEMP_HOME/bin/log-temperature.sh
+*/15 * * * *    $USBTEMP_HOME/bin/plot-temperature.sh

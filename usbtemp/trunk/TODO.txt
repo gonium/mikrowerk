@@ -1,0 +1,7 @@
+Open issues
+
+* usb query fails if the temperature measurement is started in parallel.
+  The commandline client should retry in this case.
+* Enable watchdog in firmware (if it is stable)
+* Change deployment of scripts etc (env variables)
+* Include proper license headers
