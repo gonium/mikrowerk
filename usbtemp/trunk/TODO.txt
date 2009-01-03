@@ -1,7 +1,3 @@
-Open issues
+Open issues are maintained at google code:
 
-* usb query fails if the temperature measurement is started in parallel.
-  The commandline client should retry in this case.
-* Enable watchdog in firmware (if it is stable)
-* Change deployment of scripts etc (env variables)
-* Include proper license headers
+http://code.google.com/p/mikrowerk/issues/list?q=label:usbtemp
