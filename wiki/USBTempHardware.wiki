@@ -7,9 +7,11 @@ The hardware is based on an ATMega168 and the DS18S20 temperature sensor chips. 
 
 http://gonium.net/media/usbtemp/usbtemp-prototype.jpg
 
+The USB connector is on the left. The red LED shows that the supply voltage is turned on (actually, the circuit is powered via USB). The green LED shows that at least one sensor is active.
 
+The connector at the bottom connects the external temperature sensor to the board. The primary temperature sensor is right of the connector (in the TO-92 package). At the center of the board the USB circuit connects to the ATMega168.
 
-
+At the right side, a connector for ISP programming and another one for serial output (useful for debugging) is shown.
 
 = Schematic =
 The schematic is simple:
