@@ -1,11 +1,13 @@
+#labels hardware,usbtemp
 This page describes the USBTemp hardware.
 
 = Overview =
 
 The hardware is based on an ATMega168 and the DS18S20 temperature sensor chips. The schematic is simple:
 
-http://gonium.net/media/usbtemp/usb-adapter.png
+http://gonium.net/media/usbtemp/usb-adapter-small.png
 
-You can also download the schematic in PDF format:
+You can also download the schematic bigger formats:
 
 http://gonium.net/media/usbtemp/usb-adapter.pdf
+http://gonium.net/media/usbtemp/usb-adapter.png
