@@ -15,7 +15,7 @@ At this time, USBTemp provides these features:
   * No SMD components
   * Simple commandline tool for querying the sensors
   * Support for five DS18S20 temperature sensors (extensible)
-  * Parasite-power mode for the DS18S20 - an 2-wire cable is sufficient to connect all sensors
+  * Parasite-power mode for the DS18S20 - a single 2-wire cable is sufficient to connect all sensors
 
 = Download =
 The current version can be downloaded from the "Download" page. The tarball contains the firmware, the host software and the schematic.
