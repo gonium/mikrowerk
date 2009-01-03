@@ -18,6 +18,4 @@ The schematic is simple:
 
 [http://gonium.net/media/usbtemp/usb-adapter.png http://gonium.net/media/usbtemp/usb-adapter-small.png]
 
-You can also download the schematic bigger formats:
-
-http://gonium.net/media/usbtemp/usb-adapter.pdf
+You can also download the schematic in [http://gonium.net/media/usbtemp/usb-adapter.pdf PDF format].
