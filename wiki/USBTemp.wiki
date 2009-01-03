@@ -47,5 +47,4 @@ The host software only depends on libusb and has been tested on Linux and Mac sy
 
 The microcontroller firmware uses several libraries:
   * The AVR-USB software-only USB driver from [http://obdev.at/products/avrusb/index.html Objective Development]
-  * The DS18X20 code example of Martin Thomas [http://www.siwawi.arubi.uni-kl.de/avr_projects/tempsensor/index.html Martin Thomas]
-= Credits =
+  * The DS18X20 code example of [http://www.siwawi.arubi.uni-kl.de/avr_projects/tempsensor/index.html Martin Thomas] which in turn uses code of Peter Fleury (uart-library) and Colin O'Flynn (CRC-code).
