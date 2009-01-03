@@ -46,6 +46,10 @@ $ ./usbtemp temp B46865010800 2>/dev/null
 
 The host software only depends on libusb and has been tested on Linux and Mac systems. With libusb-win32 it should be possible to compile it on Windows as well - but this is currently untested.
 
+= Building the software =
+
+= Credits =
+
 The microcontroller firmware uses several libraries:
   * The AVR-USB software-only USB driver from [http://obdev.at/products/avrusb/index.html Objective Development]
   * The DS18X20 code example of [http://www.siwawi.arubi.uni-kl.de/avr_projects/tempsensor/index.html Martin Thomas] which in turn uses code of Peter Fleury (uart-library) and Colin O'Flynn (CRC-code).
