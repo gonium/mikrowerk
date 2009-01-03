@@ -1,0 +1,3 @@
+Open issues are maintained at google code:
+
+http://code.google.com/p/mikrowerk/issues/list?q=label:usbtemp
