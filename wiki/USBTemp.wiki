@@ -10,7 +10,8 @@ This is a live graph of the temperature in Kaiserslautern, Germany - at least if
 = Features =
 
 At this time, USBTemp provides these features:
-  * Attaches to USB
+  * Attaches to USB, powered over USB
+  * Cheap hardware
   * Based on an ATMega168 (although an ATMega8 should work also)
   * No SMD components
   * Simple commandline tool for querying the sensors
