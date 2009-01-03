@@ -5,7 +5,7 @@ USBTemp provides a thermometer. It is based on the DS18S20 digital thermometers.
 
 http://gonium.net/media/temp/outside-last-24-hours.png
 
-This is a live graph of the temperature in Kaiserslautern, Germany - at least if my server at home is up and running.
+This is a live graph of the temperature in Kaiserslautern, Germany - at least if my server at home is up and running. I describe my setup at home here: [http://gonium.net/md/2009/01/03/usbtemp-continuous-temperature-monitoring/ USBTemp: Continuous Temperature Monitoring].
 
 = Features =
 
