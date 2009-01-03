@@ -22,7 +22,7 @@ At this time, USBTemp provides these features:
 The current version can be downloaded from the "Download" page. The tarball contains the firmware, the host software and the schematic.
 
 = Hardware =
-The hardware consists of an ATMega168, the DS18S20 temperature sensors and some support elements. It is described on the USBTempHardware page.
+The hardware consists of an ATMega168, the DS18S20 temperature sensors and some support elements. It is described on the [http://code.google.com/p/mikrowerk/wiki/USBTempHardware USBTempHardware] page.
 
 = Software =
 The host software uses libusb to connect to the hardware. You can query the device for available temperature sensors:
