@@ -26,9 +26,12 @@
 
 #define F_CPU 16000000UL  
 #define BAUD 9600
-//#define DEBUG 1
+#define DEBUG 1
 #define MAIN_DELAY_MS 5 // needed by usb stack
 #define READOUT_INTERVAL_MS 60000 // readout every minute
+/* For USB stress-testing, use these: */
+//#define MAIN_DELAY_MS 5 
+//#define READOUT_INTERVAL_MS 500 
 #define READOUT_WAIT_MS DS18B20_TCONV_12BIT // wait long enough for sensors
 
 #include <avr/io.h>

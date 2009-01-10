@@ -33,6 +33,7 @@
 #include <stdio.h>
 #include <stdlib.h>
 #include <string.h>
+#include <unistd.h>
 #include <usb.h>    /* this is libusb, see http://libusb.sourceforge.net/ */
 
 #define USBDEV_SHARED_VENDOR    0x16C0  /* VOTI */
@@ -41,9 +42,16 @@
  * in firmware/usbdrv/USBID-License.txt.
  */
 
+#define USB_SUCCESS		    0
 #define USB_ERROR_NOTFOUND  1
 #define USB_ERROR_ACCESS    2
 #define USB_ERROR_IO        3
+// Number of attempts to complete an USB operation before giving up.
+#define USB_MAX_RETRIES		3
+
+#define SENSOR_ID_UNKNOWN	  0
+#define SENSOR_QUERY_OK		  1
+#define SENSOR_QUERY_FAILURE  0 
 
 /* These are the vendor specific SETUP commands implemented by our USB device */
 #define USBTEMP_CMD_TEST			0
@@ -90,12 +98,12 @@ static int  usbGetStringAscii(usb_dev_handle *dev, int index, int langid, char *
   return i-1;
 }
 
-static int usbOpenDevice(usb_dev_handle **device, int vendor, char *vendorName, int product, char *productName)
+static unsigned char usbOpenDevice(usb_dev_handle **device, int vendor, char *vendorName, int product, char *productName)
 {
   struct usb_bus      *bus;
   struct usb_device   *dev;
   usb_dev_handle      *handle = NULL;
-  int                 errorCode = USB_ERROR_NOTFOUND;
+  unsigned char       errorCode = USB_ERROR_NOTFOUND;
   static int          didUsbInit = 0;
 
   if(!didUsbInit){
@@ -147,7 +155,7 @@ static int usbOpenDevice(usb_dev_handle **device, int vendor, char *vendorName, 
       break;
   }
   if(handle != NULL){
-    errorCode = 0;
+    errorCode = USB_SUCCESS;
     *device = handle;
   }
   return errorCode;
@@ -169,9 +177,11 @@ void printhex_byte(const unsigned char  b) {
 
 /***
  * retrieve the number of attached sensors.
+ * TODO: Change error behaviour.
  */
-unsigned char getNumSensors(usb_dev_handle *handle) {
+unsigned char getNumSensors(usb_dev_handle *handle, unsigned char* amount) {
   unsigned char       buffer[8];
+  unsigned char		  retval = SENSOR_QUERY_OK; // !=0 if an error occured.
   int                 nBytes;
   nBytes = usb_control_msg(handle, 
       USB_TYPE_VENDOR | USB_RECIP_DEVICE | USB_ENDPOINT_IN, 
@@ -182,74 +192,88 @@ unsigned char getNumSensors(usb_dev_handle *handle) {
       sizeof(buffer), 
       5000);
   if(nBytes < 1){
-    if(nBytes < 0)
-      fprintf(stderr, "USB error: %s\n", usb_strerror());
-    fprintf(stderr, "only %d bytes status received\n", nBytes);
-    exit(1);
+	if(nBytes < 0) {
+	  fprintf(stderr, "USB error: %s\n", usb_strerror());
+	}
+	fprintf(stderr, "only %d bytes status received\n", nBytes);
+	return USB_ERROR_IO;
   }
-  return buffer[0];
+  *amount=buffer[0];
+  return retval;
 }
-void getTemperature(usb_dev_handle *handle, char* sensor_name) {
+
+int getSensorById(usb_dev_handle *handle, char* sensor_name, int* sensorId) {
   unsigned char       buffer[8];
+  unsigned char		  retval = USB_SUCCESS; // !=0 if an error occured.
   int                 nBytes;
   fprintf(stderr, "searching sensor with id %s - ", sensor_name);
-  unsigned char amount=getNumSensors(handle);
-  unsigned char sensorId=0;
+  unsigned char amount=0;
+  if (getNumSensors(handle, &amount)) {
   unsigned char found=1;
+  *sensorId=SENSOR_ID_UNKNOWN; // make sure the value is defined.
   for (int i=0; i<amount; i++) { 
-    nBytes = usb_control_msg(handle, 
-        USB_TYPE_VENDOR | USB_RECIP_DEVICE | USB_ENDPOINT_IN, 
-        USBTEMP_CMD_QUERY_SENSOR,	  // Command ID
-        i,							  // Value 
-        0,							  // Index 
-        (char *) buffer, 
-        sizeof(buffer), 
-        5000);
-    if(nBytes < 1+DS18X20_ID_LENGTH){
-      if(nBytes < 0)
-        fprintf(stderr, "USB error: %s\n", usb_strerror());
-      fprintf(stderr, "only %d bytes status received\n", nBytes);
-      exit(1);
-    }
-    found=1;
-    for(int j=0; j<DS18X20_ID_LENGTH; j++) {
-      char id_part = buffer[j+1];
-      // Convert to string - nibble-wise hex representation.
-      unsigned char lsn = id_part & 0x0f;
-      if (lsn>9) lsn += 'A'-10;
-      else lsn += '0';
-      unsigned char msn = (id_part>>4) & 0x0f;
-      if (msn>9) msn += 'A'-10;
-      else msn += '0';
-      // compare this byte to the given ID represenation
-      if (! (msn == sensor_name[2*j] && lsn == sensor_name[2*j+1])) {
-        found = 0;
-        break;
-      }
-    }
-    if (found) {
-      sensorId=i;
-      break;
-    }
+	nBytes = usb_control_msg(handle, 
+		USB_TYPE_VENDOR | USB_RECIP_DEVICE | USB_ENDPOINT_IN, 
+		USBTEMP_CMD_QUERY_SENSOR,	  // Command ID
+		i,							  // Value 
+		0,							  // Index 
+		(char *) buffer, 
+		sizeof(buffer), 
+		5000);
+	if(nBytes < 1+DS18X20_ID_LENGTH){
+	  if(nBytes < 0) {
+		fprintf(stderr, "USB error: %s\n", usb_strerror());
+		retval=USB_ERROR_IO;
+		return retval;
+	  }
+	  fprintf(stderr, "only %d bytes status received\n", nBytes);
+	}
+	found=1;
+	for(int j=0; j<DS18X20_ID_LENGTH; j++) {
+	  char id_part = buffer[j+1];
+	  // Convert to string - nibble-wise hex representation.
+	  unsigned char lsn = id_part & 0x0f;
+	  if (lsn>9) lsn += 'A'-10;
+	  else lsn += '0';
+	  unsigned char msn = (id_part>>4) & 0x0f;
+	  if (msn>9) msn += 'A'-10;
+	  else msn += '0';
+	  // compare this byte to the given ID represenation
+	  if (! (msn == sensor_name[2*j] && lsn == sensor_name[2*j+1])) {
+		found = 0;
+		break;
+	  }
+	}
+	if (found) {
+	  *sensorId=i;
+	  break;
+	}
   }
-  if (! found) {
-    fprintf(stderr, "Error: sensor not found.\n");
-    exit(-2);
+  return retval;
+  } else {
+	return SENSOR_QUERY_FAILURE;
   }
+}
+
+int printTemperatureById(usb_dev_handle *handle, int sensorId) {
+  unsigned char       buffer[8];
+  unsigned char		  retval = SENSOR_QUERY_OK; // !=0 if an error occured.
+  int                 nBytes;
   fprintf(stderr, "using sensor handle %u\n", sensorId);
   nBytes = usb_control_msg(handle, 
-      USB_TYPE_VENDOR | USB_RECIP_DEVICE | USB_ENDPOINT_IN, 
-      USBTEMP_CMD_GET_TEMP,		  // Command ID
-      sensorId,					  // sensor id 
-      0,							  // Index 
-      (char *) buffer, 
-      sizeof(buffer), 
-      5000);
+	  USB_TYPE_VENDOR | USB_RECIP_DEVICE | USB_ENDPOINT_IN, 
+	  USBTEMP_CMD_GET_TEMP,		  // Command ID
+	  sensorId,					  // sensor id 
+	  0,							  // Index 
+	  (char *) buffer, 
+	  sizeof(buffer), 
+	  5000);
   if(nBytes < 4){
-    if(nBytes < 0)
-      fprintf(stderr, "USB error: %s\n", usb_strerror());
-    fprintf(stderr, "only %d bytes status received\n", nBytes);
-    exit(1);
+	if(nBytes < 0) {
+	  fprintf(stderr, "USB error: %s\n", usb_strerror());
+	}
+	fprintf(stderr, "only %d bytes status received\n", nBytes);
+	return SENSOR_QUERY_FAILURE;
   }
   unsigned char sensor = buffer[0];
   unsigned char subzero, cel, cel_frac_bits;
@@ -258,46 +282,67 @@ void getTemperature(usb_dev_handle *handle, char* sensor_name) {
   cel_frac_bits=buffer[3];
   fprintf(stderr, "reading sensor %d (°C): ", sensor);
   if (subzero)
-    printf("-");
+	printf("-");
   else 
-    printf("+");
+	printf("+");
   fprintf(stdout, "%d.", cel);
   fprintf(stdout, "%04d\n", cel_frac_bits*DS18X20_FRACCONV);
+  return retval;
 }
 
-void printSensors(usb_dev_handle *handle) {
+/**
+ * read the temperature of the sensor with the given name. The name is
+ * the ID of the sensor.
+ */
+int printTemperatureByName(usb_dev_handle *handle, char* sensor_name) {
+  int sensorId=0;
+  if (getSensorById(handle, sensor_name, &sensorId)) {
+	fprintf(stderr, "Error: sensor not found.\n");
+	return SENSOR_ID_UNKNOWN;
+  }
+  return printTemperatureById(handle, sensorId);
+}
+
+int printSensors(usb_dev_handle *handle) {
   unsigned char       buffer[8];
   int                 nBytes;
-  unsigned char amount=getNumSensors(handle);
-  fprintf(stderr, "%d sensor(s) found, querying\n", amount);
-  for (int i=0; i<amount; i++) { 
-    nBytes = usb_control_msg(handle, 
-        USB_TYPE_VENDOR | USB_RECIP_DEVICE | USB_ENDPOINT_IN, 
-        USBTEMP_CMD_QUERY_SENSOR,	  // Command ID
-        i,							  // Value 
-        0,							  // Index 
-        (char *) buffer, 
-        sizeof(buffer), 
-        5000);
-    if(nBytes < 2){
-      if(nBytes < 0)
-        fprintf(stderr, "USB error: %s\n", usb_strerror());
-      fprintf(stderr, "only %d bytes status received\n", nBytes);
-      exit(1);
-    }
-    // TODO: Clean up, use struct to get clean response!
-    // buffer[0]: Type of sensor
-    // buffer[1-7]: 6-byte hardware id of sensor.
-    fprintf(stderr, "sensor %d: ID ", i);
-    for(int j=1; j<7; j++) {
-      char id_part = buffer[j];
-      printhex_byte(id_part);
-    }
-    fprintf(stderr, " type: ");
-    if (buffer[0] == DS18S20_ID)
-      fprintf(stderr, "(DS18S20)\n");
-    else if (buffer[0] == DS18B20_ID)
-      fprintf(stderr, "(DS18B20)\n");
+  unsigned char amount=0;
+  printf("Checking number of sensors\n");
+  if (getNumSensors(handle, &amount)) {
+	fprintf(stderr, "%d sensor(s) found, querying\n", amount);
+	for (int i=0; i<amount; i++) { 
+	  nBytes = usb_control_msg(handle, 
+		  USB_TYPE_VENDOR | USB_RECIP_DEVICE | USB_ENDPOINT_IN, 
+		  USBTEMP_CMD_QUERY_SENSOR,	  // Command ID
+		  i,							  // Value 
+		  0,							  // Index 
+		  (char *) buffer, 
+		  sizeof(buffer), 
+		  5000);
+	  if(nBytes < 2){
+		if(nBytes < 0) {
+		  fprintf(stderr, "USB error: %s\n", usb_strerror());
+		}
+		fprintf(stderr, "only %d bytes status received\n", nBytes);
+		return SENSOR_QUERY_FAILURE;
+	  }
+	  // TODO: Clean up, use struct to get clean response!
+	  // buffer[0]: Type of sensor
+	  // buffer[1-7]: 6-byte hardware id of sensor.
+	  fprintf(stderr, "sensor %d: ID ", i);
+	  for(int j=1; j<7; j++) {
+		char id_part = buffer[j];
+		printhex_byte(id_part);
+	  }
+	  fprintf(stderr, " type: ");
+	  if (buffer[0] == DS18S20_ID)
+		fprintf(stderr, "(DS18S20)\n");
+	  else if (buffer[0] == DS18B20_ID)
+		fprintf(stderr, "(DS18B20)\n");
+	}
+	return SENSOR_QUERY_OK;
+  } else {
+	return SENSOR_QUERY_FAILURE;
   }
 }
 
@@ -310,54 +355,86 @@ int main(int argc, char **argv) {
   int                 nBytes;
 
   if(argc < 2){
-    usage(argv[0]);
-    exit(1);
+	usage(argv[0]);
+	exit(1);
   }
   usb_init();
-  if(usbOpenDevice(&handle, USBDEV_SHARED_VENDOR, "gonium.net", USBDEV_SHARED_PRODUCT, "usbtemp") != 0){
-    fprintf(stderr, "Could not find USB device \"usbtemp\" with vid=0x%x pid=0x%x\n", USBDEV_SHARED_VENDOR, USBDEV_SHARED_PRODUCT);
-    exit(1);
+  char attempt=0, error=0;
+  do {
+	attempt++;
+	error=usbOpenDevice(&handle, USBDEV_SHARED_VENDOR, "gonium.net", USBDEV_SHARED_PRODUCT, "usbtemp");
+	if(error != 0){
+	  fprintf(stderr, "Could not open USB device \"usbtemp\" with vid=0x%x pid=0x%x, retrying\n", USBDEV_SHARED_VENDOR, USBDEV_SHARED_PRODUCT);
+	  sleep(2*attempt);
+	}
+  } while (error && attempt < USB_MAX_RETRIES);
+  if (error) {
+	fprintf(stderr, "Permanent problem opening USBTemp device. Giving up.\n");
+	exit(1);
   }
   /* We have searched all devices on all busses for our USB device above. Now
    * try to open it and perform the vendor specific control operations for the
    * function requested by the user.
    */
   if(strcmp(argv[1], "test") == 0){
-    int i, v, r;
-    /* The test consists of writing 1000 random numbers to the device and checking
-     * the echo. This should discover systematic bit errors (e.g. in bit stuffing).
-     */
-    fprintf(stderr, "testing stability of usb connection. please wait.\n");
-    for(i=0;i<1000;i++){
-      v = rand() & 0xffff;
-      nBytes = usb_control_msg(handle, USB_TYPE_VENDOR | USB_RECIP_DEVICE | USB_ENDPOINT_IN, USBTEMP_CMD_TEST, v, 0, (char *)buffer, sizeof(buffer), 5000);
-      if(nBytes < 2){
-        if(nBytes < 0)
-          fprintf(stderr, "USB error: %s\n", usb_strerror());
-        fprintf(stderr, "only %d bytes received in iteration %d\n", nBytes, i);
-        fprintf(stderr, "value sent = 0x%x\n", v);
-        exit(1);
-      }
-      r = buffer[0] | (buffer[1] << 8);
-      if(r != v){
-        fprintf(stderr, "data error: received 0x%x instead of 0x%x in iteration %d\n", r, v, i);
-        exit(1);
-      }
-    }
-    printf("test succeeded\n");
+	int i, v, r;
+	/* The test consists of writing 1000 random numbers to the device and checking
+	 * the echo. This should discover systematic bit errors (e.g. in bit stuffing).
+	 */
+	fprintf(stderr, "testing stability of usb connection. please wait.\n");
+	for(i=0;i<1000;i++){
+	  v = rand() & 0xffff;
+	  nBytes = usb_control_msg(handle, USB_TYPE_VENDOR | USB_RECIP_DEVICE | USB_ENDPOINT_IN, USBTEMP_CMD_TEST, v, 0, (char *)buffer, sizeof(buffer), 5000);
+	  if(nBytes < 2){
+		if(nBytes < 0)
+		  fprintf(stderr, "USB error: %s\n", usb_strerror());
+		fprintf(stderr, "only %d bytes received in iteration %d\n", nBytes, i);
+		fprintf(stderr, "value sent = 0x%x\n", v);
+		exit(1);
+	  }
+	  r = buffer[0] | (buffer[1] << 8);
+	  if(r != v){
+		fprintf(stderr, "data error: received 0x%x instead of 0x%x in iteration %d\n", r, v, i);
+		exit(1);
+	  }
+	}
+	printf("test succeeded\n");
   } else if (strcmp(argv[1], "sensors") == 0) {
-    //fprintf(stderr, "checking attached sensors\n");
-    printSensors(handle);
-
+	//fprintf(stderr, "checking attached sensors\n");
+	char attempt=0, success=0;
+	do {
+	  attempt++;
+	  success=printSensors(handle);
+	  if (!success) {
+		fprintf(stderr, "Querying USBTemp failed, attempt %d (of %d)\n", attempt, USB_MAX_RETRIES);
+		sleep(2*attempt);
+	  }
+	} while ((!success) && attempt < USB_MAX_RETRIES);
+	if (error) {
+	  fprintf(stderr, "Permanent problem querying USBTemp device. Giving up.\n");
+	  exit(1);
+	}
   } else if (strcmp(argv[1], "temp") == 0) {
-    if (argc < 3 || strlen(argv[2]) != 2*DS18X20_ID_LENGTH) {
-      fprintf(stderr, "usage: usbtemp temp <SensorID>\n");
-      exit(-1);
-    }
-    getTemperature(handle, argv[2]);
+	if (argc < 3 || strlen(argv[2]) != 2*DS18X20_ID_LENGTH) {
+	  fprintf(stderr, "usage: usbtemp temp <SensorID>\n");
+	  exit(-1);
+	}
+	char attempt=0, success=0;
+	do {
+	  attempt++;
+	  success=printTemperatureByName(handle, argv[2]);
+	  if (! success) {
+		fprintf(stderr, "Querying USBTemp failed, attempt %d (of %d)\n", attempt, USB_MAX_RETRIES);
+		sleep(2*attempt);
+	  }
+	} while ((!success) && attempt < USB_MAX_RETRIES);
+	if (error) {
+	  fprintf(stderr, "Permanent problem querying USBTemp device. Giving up.\n");
+	  exit(1);
+	}
   } else {
-    usage(argv[0]);
-    exit(1);
+	usage(argv[0]);
+	exit(1);
   }
   usb_close(handle);
   return 0;
