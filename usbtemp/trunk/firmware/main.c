@@ -230,14 +230,24 @@ void print_readings(void) {
   }
 }
 
+void enable_status_led(void) {
+  // Turn LED on: Pull to GND 
+  DS18X20_STATUS_LED_DDR |= (1 << DS18X20_STATUS_LED_PIN);  // Output
+}
+
+void disable_status_led(void) {
+  //DS18X20_STATUS_LED_PORT |= (1 << DS18X20_STATUS_LED_PIN); // Disable
+  DS18X20_STATUS_LED_DDR &= ~(1 << DS18X20_STATUS_LED_PIN);  // Output
+}
+
+
 /********************** main code below *******************/
 
 int main(void) {
   uint8_t i;
-  
+
   //TODO: Enable watchdog.
-  //TODO: Define compile-switch to disable serial output.
-  
+
   // UART init
   uart_init((UART_BAUD_SELECT((BAUD),F_OSC)));
   // USB code init
@@ -255,30 +265,28 @@ int main(void) {
   usbDeviceDisconnect();  /* enforce re-enumeration, do this while interrupts are disabled! */
   i = 250;
   while(--i){         /* fake USB disconnect for > 500 ms */
-	//wdt_reset();
-	_delay_ms(2);
+    //wdt_reset();
+    _delay_ms(2);
   }
   usbDeviceConnect();
   //TCCR0 = 5;          /* set prescaler to 1/1024 */
   usbInit();
   sei();
-
-  // Init DS18X20 Connect LED.
-  // Turn LED on: Pull to GND 
-  DS18X20_STATUS_LED_DDR |= (1 << DS18X20_STATUS_LED_PIN);  // Output
-
+  // Print debugging header
+  logs_P( "\r\nUSBtemp - temperature at your fingertips\r\n" );
+  logs_P( "----------------------------------------\r\n" );
+  // Init DS18X20 Connect LED. Allow some sleep time to signal we're up.
+  enable_status_led();
+  delayloop32(1000000UL);
   // search for the available sensors.
   nSensors = search_sensors();
   // TODO: Use LED to signal errors, i.e. CRC errors.
   if (nSensors == 0)
-    DS18X20_STATUS_LED_PORT |= (1 << DS18X20_STATUS_LED_PIN); // Disable
+    disable_status_led();
   else
-    DS18X20_STATUS_LED_PORT &= ~(1 << DS18X20_STATUS_LED_PIN); // Enable
+    enable_status_led();
 
 
-  // Print debugging header
-  logs_P( "\r\nUSBtemp - temperature at your fingertips\r\n" );
-  logs_P( "----------------------------------------\r\n" );
   logi((int) nSensors);
   logs_P( " DS18X20 Sensor(s) available:\r\n" );
   for (i=0; i<nSensors; i++) {
@@ -304,6 +312,7 @@ int main(void) {
     if (state == IDLE && delay_counter > READOUT_INTERVAL_MS) {
       // start measurement.
       async_start_read_sensors();
+      disable_status_led();
       delay_counter=0;
       state=MEASURING;
     }
@@ -316,6 +325,7 @@ int main(void) {
     if (state==UPDATED) {
       // print temperature on uart.
       print_readings();
+      enable_status_led();
       delay_counter = 0;
       state=IDLE;
     }
