@@ -68,6 +68,8 @@ draw_graph_outside () {
 draw_graph_complete "last-24-hours.png" "Temperature - last 24 hours" "-1day"
 draw_graph_complete "last-week.png" "Temperature - last week" "-1week"
 draw_graph_complete "last-month.png" "Temperature - last month" "-1month"
+draw_graph_complete "last-year.png" "Temperature - last year" "-1year"
 draw_graph_outside "outside-last-24-hours.png" "Temperature - last 24 hours" "-1day"
 draw_graph_outside "outside-last-week.png" "Temperature - last week" "-1week"
 draw_graph_outside "outside-last-month.png" "Temperature - last month" "-1month"
+draw_graph_outside "outside-last-year.png" "Temperature - last year" "-1year"

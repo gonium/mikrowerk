@@ -3,5 +3,5 @@
 USBTEMP_HOME=/home/md/Projects/usbtemp/trunk
 
 # m h  dom mon dow   command
-*/5 * * * *     $USBTEMP_HOME/bin/log-temperature.sh
-*/15 * * * *    $USBTEMP_HOME/bin/plot-temperature.sh
+*/5 * * * *     $USBTEMP_HOME/bin/log-temperature.sh > /dev/null 2>&1
+*/15 * * * *    $USBTEMP_HOME/bin/plot-temperature.sh > /dev/null 2>&1 && $HOME/usbtemp/push-graphs.sh > /dev/null 2>&1
