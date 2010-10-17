@@ -50,3 +50,13 @@ fi
 echo "Found readings: temp1=$temperature1 temp2=$temperature2"
 # Now, log the readings to the RRDTool database.
 $rrdtool_bin update $TEMP_DATABASE "N:$temperature1:$temperature2"
+
+timestamp=`date "+%d. %b %Y, %H:%M"`
+if [ -e $SENSOR1_CURRENT_FILE ]; then
+  rm $SENSOR1_CURRENT_FILE
+fi
+echo "$timestamp:<br/>$temperature1 °C" > $SENSOR1_CURRENT_FILE
+if [ -e $SENSOR2_CURRENT_FILE ]; then
+  rm $SENSOR2_CURRENT_FILE
+fi
+echo "$timestamp:<br/>$temperature2 °C" > $SENSOR2_CURRENT_FILE

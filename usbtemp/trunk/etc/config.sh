@@ -4,3 +4,6 @@ SENSOR2_ID="B46865010800"
 
 TEMP_DATABASE="$HOME/usbtemp/temperatures.rrd"
 GRAPH_DIRECTORY="$HOME/usbtemp/temp-graphs"
+
+SENSOR1_CURRENT_FILE="$HOME/usbtemp/inside.txt"
+SENSOR2_CURRENT_FILE="$HOME/usbtemp/outside.txt"
