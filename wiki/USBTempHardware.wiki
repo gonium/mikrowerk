@@ -16,7 +16,7 @@ At the right side, a connector for ISP programming and another one for serial ou
 = Schematic =
 The schematic is simple:
 
-[http://gonium.net/media/usbtemp/usb-adapter.png http://gonium.net/media/usbtemp/usb-adapter-small.png]
+[http://mikrowerk.googlecode.com/svn/usbtemp/trunk/schematic/usb-adapter.png http://mikrowerk.googlecode.com/svn/usbtemp/trunk/schematic/usb-adapter-small.png]
 
 You can also download the schematic in [http://gonium.net/media/usbtemp/usb-adapter.pdf PDF format].
 
