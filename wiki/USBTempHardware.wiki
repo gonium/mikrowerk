@@ -18,7 +18,7 @@ The schematic is simple:
 
 [http://mikrowerk.googlecode.com/svn/usbtemp/trunk/schematic/usb-adapter.png http://mikrowerk.googlecode.com/svn/usbtemp/trunk/schematic/usb-adapter-small.png]
 
-You can also download the schematic in [http://gonium.net/media/usbtemp/usb-adapter.pdf PDF format].
+You can also download the schematic in [http://mikrowerk.googlecode.com/svn/usbtemp/trunk/schematic/usb-adapter.pdf PDF format].
 
 The part list is rather short - if you do not want to do development you can skip the serial connector. The full part list is here:
 
