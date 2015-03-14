@@ -1,0 +1,56 @@
+USBTemp measures the temperature and connects via USB to your computer.
+
+# Introduction #
+USBTemp provides a thermometer. It is based on the DS18S20 digital thermometers. In addition, the thermometer connects to an USB port - you can read the temperature using a commandline tool. In combination with RRDTool you can easily create temperature graphs:
+
+![http://gonium.net/media/temp/outside-last-24-hours.png](http://gonium.net/media/temp/outside-last-24-hours.png)
+
+This is a live graph of the temperature in Kaiserslautern, Germany - at least if my server at home is up and running. I describe my setup at home here: [USBTemp: Continuous Temperature Monitoring](http://gonium.net/md/2009/01/03/usbtemp-continuous-temperature-monitoring/).
+
+# Features #
+
+At this time, USBTemp provides these features:
+  * Attaches to USB, powered over USB
+  * Cheap hardware
+  * Based on an ATMega168 (although an ATMega8 should work also)
+  * No SMD components
+  * Simple commandline tool for querying the sensors
+  * Support for five DS18S20 temperature sensors (extensible)
+  * Parasite-power mode for the DS18S20 - a single 2-wire cable is sufficient to connect all sensors
+
+# Download #
+The current version can be downloaded from the "Download" page. The tarball contains the firmware, the host software and the schematic.
+
+# Hardware #
+The hardware consists of an ATMega168, the DS18S20 temperature sensors and some support elements. It is described on the [USBTempHardware](http://code.google.com/p/mikrowerk/wiki/USBTempHardware) page.
+
+# Software #
+The host software uses libusb to connect to the hardware. You can query the device for available temperature sensors:
+```
+$ ./usbtemp sensors
+2 sensor(s) found, querying
+sensor 0: ID 9F17A5010800 type: (DS18S20)
+sensor 1: ID B46865010800 type: (DS18S20)
+```
+The IDs are the actual unique hardware IDs of the DS18S20 sensors. Afterwards you can use the ID to query a sensor:
+```
+/usbtemp temp B46865010800
+searching sensor with id B46865010800 - using sensor handle 1
+reading sensor 1 (°C): +1.1875
+```
+If you want to use the raw temperature value in a script, simply discard stderr:
+```
+$ ./usbtemp temp B46865010800 2>/dev/null
++1.0000
+```
+
+The host software only depends on libusb and has been tested on Linux and Mac systems. With libusb-win32 it should be possible to compile it on Windows as well - but this is currently untested.
+
+# Building the software #
+TODO.
+
+# Credits #
+
+The microcontroller firmware uses several libraries:
+  * The AVR-USB software-only USB driver from [Objective Development](http://obdev.at/products/avrusb/index.html)
+  * The DS18X20 code example of [Martin Thomas](http://www.siwawi.arubi.uni-kl.de/avr_projects/tempsensor/index.html) which in turn uses code of Peter Fleury (uart-library) and Colin O'Flynn (CRC-code).

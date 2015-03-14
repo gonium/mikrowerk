@@ -1,0 +1,46 @@
+This page describes the USBTemp hardware.
+
+# Overview #
+
+The hardware is based on an ATMega168 and the DS18S20 temperature sensor chips. This picture shows my prototype:
+
+![http://gonium.net/media/usbtemp/usbtemp-prototype.jpg](http://gonium.net/media/usbtemp/usbtemp-prototype.jpg)
+
+The USB connector is on the left. The red LED shows that the supply voltage is turned on (actually, the circuit is powered via USB). The green LED shows that at least one sensor is active.
+
+The connector at the bottom connects the external temperature sensor to the board. The primary temperature sensor is to the right of the connector (in the TO-92 package). At the center of the board the USB circuit connects to the ATMega168.
+
+At the right side, a connector for ISP programming and another one for serial output (useful for debugging) is shown.
+
+# Schematic #
+The schematic is simple:
+
+![![](http://mikrowerk.googlecode.com/svn/usbtemp/trunk/schematic/usb-adapter-small.png)](http://mikrowerk.googlecode.com/svn/usbtemp/trunk/schematic/usb-adapter.png)
+
+You can also download the schematic in [PDF format](http://mikrowerk.googlecode.com/svn/usbtemp/trunk/schematic/usb-adapter.pdf).
+
+The part list is rather short - if you do not want to do development you can skip the serial connector. The full part list is here:
+
+```
+Qty Value         Device          Parts    
+1                 10-XX           RESET    
+1                 PN61729         USB      
+1                 W237-02P        1WIRE-EXT
+1                 W237-04P        SERIAL   
+1   1k5           R-EU_0207/10    R1       
+1   10µF          CPOL-EUTAP5-45  C5       
+2   10k           R-EU_0204/7     R4, R6   
+1   16 Mhz        CRYSTALHC49U-V  Q1       
+2   22pF          C-EU025-030X050 C1, C2   
+1   47nF          C-EU025-025X050 C4       
+2   68            R-EU_0207/10    R3, R5   
+1   100nF         C-EU025-025X050 C3       
+1   110k          R-EU_0207/10    R2       
+2   330           R-EU_0207/10    R7, R8   
+1   ATMEGA168-20P ATMEGA168-20P   IC1      
+1   AVR-ISP-6     AVR-ISP-6       JP1      
+2   BZX79-3V6     BZX55           D1, D2   
+1   DS18S20       DS18S20         IC2      
+1   Green         LED5MM          LED2     
+1   Red           LED5MM          LED1    
+```

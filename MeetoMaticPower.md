@@ -1,0 +1,35 @@
+## Introduction ##
+
+In order to be able to run the device from batteries, I need to optimize the power consumption. I started with a very simple 7805-based power regulator, which eats up the 9V block battery fairly quickly. Beside optimizing the hardware, one should also consider software adjustments.
+
+The battery is a 9V block battery (6LR61). The alkaline type provide a capacity of 500-600mAh.
+
+## 7805-based hardware ##
+I start with measuring the 7805-based prototype:
+
+| Peak Current | 92 mA |
+|:-------------|:------|
+| All LEDs operating | 50 mA |
+| One LED operating | 10 mA |
+| Alarm rings | 8 mA |
+| ATTiny2313 sleep mode | 3mA |
+
+The peak current occurs during startup when all LEDs are switched on for testing. During operation, the three LED banks are multiplexed and therefore the power consumption drops to 50 mA. Depending on the number of LEDs that are on, the operating current goes down to 10 mA. When the alarm rings, the system draws 8mA.
+
+When the ATTiny2313 enters sleep mode, the system draws 3 mA. The datasheet of the ATTiny2313 lists a maximum of 6 µA (watchdog enabled) or 2 µA (watchdog disabled) in the power-down mode. The quiescent current of the 7805 is typically 5 mA - based on the datasheet. I assume that the minimal value is lower than the 3mA measured above. The major current sink is the regulator.
+
+The battery will last for 500mAh/5mA=50h, so only a couple of days. Of course, this is not acceptable...
+
+## LP2950 power regulator ##
+These power regulators are designed to have a very low quiescent current of 75 µA. Lets say the ATTiny and the peripherals draw 80 µA, then the battery will live for 500mAh/0.08mA=6250 hours, about 260 days. Better, but still not really great.
+
+## No power regulator ##
+The ATTiny microcontroller series is designed for low power consumption - and it is designed to tolerate a large range of voltages (the datasheet says 2.7V to 5.5V for the ATTiny2313, and 1.8V to 5.5 for the ATTiny2313-V). It is therefore possible to connect batteries directly. I use three AA-cells of 1.5V. For fresh cells, the input voltage is 4.5V and decays down to 3\*0.8V=2.4V. This is completely in the range of the ATTiny2313-V variant.
+
+In order to test the quietescent current, I used a MC34063-based SMPS power supply to vary the input voltage from 4.14V to 2.8V. The circuit works, but the brightness of the LEDs decays (which I expected). In sleep mode, the circuit consumes 184 µA@2.8V and 214 µA@4.14 V.
+
+![http://mikrowerk.googlecode.com/svn/meet-o-matic/pics/AA-powertest.jpg](http://mikrowerk.googlecode.com/svn/meet-o-matic/pics/AA-powertest.jpg)
+
+The AA cells have a capacity of 2850mAh, so three of them have a combined capacity of 3\*2850mAh=8550mAh. The batteries will last (theoretically) for 8550mAh/0.200mA=42750h, approximately four years in sleep mode. Although I expect the batteries to decay over time, this seems to be a reasonable solution for the power supply.
+
+Note that the power consumption could be reduced further by using a slower crystal, but I am quite satisfied with this configuration.

@@ -1,0 +1,21 @@
+![http://mikrowerk.googlecode.com/svn/meet-o-matic/pics/prototype1.jpg](http://mikrowerk.googlecode.com/svn/meet-o-matic/pics/prototype1.jpg)
+
+## Motivation ##
+
+So, you have been in project meetings, wasting time... The problem is often not the intentions of your coworkers (and yourself!), but meetings just tend to extend themselves by principles physicist have no understanding yet.
+
+Of course, a simple time-monitoring device can provide input to a social feedback-loop - with other words, it can remind yourself to keep meetings short and concise.
+
+## Principle of Operation ##
+
+The theory is simple: start the device and it will show you a progress bar. After the maximum time of a healthy meeting, 15 minutes, has elapsed, an alarm tone is played. Of course, you can adjust the countdown time.
+
+The device is based on an ATTiny2313. A single button is used to adjust the time. After the alarm ringed, the device is put into sleep mode. The button can generate an interrupt -- thus waking the device and restarting the countdown again.
+
+A design goal of the device is to reduce the power consumption as far as possible with off-the-shelf, easily accessible hardware. Read more on the MeetoMaticPower page
+
+## Open issues ##
+
+This is a beta release of the Meet-O-Matic. The open issues are documented in the issuetracker:
+
+http://code.google.com/p/mikrowerk/issues/list?q=label:MeetOMatic
